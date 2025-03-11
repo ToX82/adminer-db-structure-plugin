@@ -2,7 +2,8 @@
 
 It adds an AI-friendly markdown schema of your database or the selected tables. You'll find the new textarea in the SQL command page.
 
-![image](https://github.com/user-attachments/assets/48c0d314-1485-4615-acf1-ddd3ca9ca932)
+![image](https://github.com/user-attachments/assets/ee2b61fb-a034-463c-a51b-5fd9b84743d8)
+
 
 ## Usage
 

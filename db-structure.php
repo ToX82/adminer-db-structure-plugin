@@ -9,6 +9,36 @@
  */
 class DbStructure
 {
+    /**
+     * Keywords that indicate sensitive data
+     * @var array
+     */
+    private $sensitiveKeywords = ['password', 'token', 'secret'];
+
+    /**
+     * Masks sensitive data with placeholders
+     * @param string $value The value to check
+     * @param string $fieldName The field name
+     * @return string The masked value or original value
+     */
+    private function maskSensitiveData($value, $fieldName)
+    {
+        if (empty($value)) {
+            return $value;
+        }
+
+        $fieldLower = strtolower($fieldName);
+
+        // Check if field name contains sensitive keywords
+        foreach ($this->sensitiveKeywords as $keyword) {
+            if (strpos($fieldLower, $keyword) !== false) {
+                return '[HIDDEN_' . strtoupper($keyword) . ']';
+            }
+        }
+
+        return $value;
+    }
+
     public function head($Hb = null)
     {
         // Handle AJAX requests first
@@ -263,7 +293,9 @@ class DbStructure
 
                     // Function to update data for all tables (AJAX)
                     function updateDataForAllTables() {
-                        const activeButtons = Array.from(buttonContainer.querySelectorAll("button.table-toggle.active"));
+                        const activeButtons = Array.from(
+                            buttonContainer.querySelectorAll("button.table-toggle.active")
+                        );
                         const recordCount = parseInt(recordsInput.value) || 5;
 
                         if (activeButtons.length === 0) {
@@ -305,7 +337,9 @@ class DbStructure
 
                     // Update function for structure
                     function updateTextarea() {
-                        const activeButtons = Array.from(buttonContainer.querySelectorAll("button.table-toggle.active"));
+                        const activeButtons = Array.from(
+                            buttonContainer.querySelectorAll("button.table-toggle.active")
+                        );
                         const output = activeButtons.map(btn => {
                             const table = tables[btn.dataset.tableIndex];
                             let content = table.structure;
@@ -442,6 +476,9 @@ class DbStructure
                 $csvRow = array();
                 foreach ($fieldNames as $field) {
                     $value = $row[$field] ?? '';
+                    // Mask sensitive data
+                    $value = $this->maskSensitiveData($value, $field);
+
                     // Escape quotes and wrap in quotes if necessary
                     if (is_null($row[$field])) {
                         $csvRow[] = 'NULL';
